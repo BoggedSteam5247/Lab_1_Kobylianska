@@ -44,6 +44,19 @@ def rule2(d, p):
         d[p].add((t[2], p, t[0]))
     return len(d)!=l
 
+def rule_specific(d):
+    """Правило для специфічних переваг сенсорів"""
+    l = len(d)
+    for sensor in d:
+        for prop in d[sensor]:
+            if prop[1] == "перевага":
+                # Додаємо специфічні комбінації переваг
+                if prop[2] == "точність":
+                    d[sensor].add((prop[0], "перевага", "надійність"))
+                if prop[2] == "енергозбереження":
+                    d[sensor].add((prop[0], "перевага", "економія енергії"))
+    return len(d) != l
+
 def reasoner(F, rules, *args):
     """Виводить нові факти з множини триплетів F шляхом застосування правил rules. Цикл застосування усіх правил повторюється, поки виводяться нові факти. Повертає множину зі старими і новими фактами."""
     d=kb2tree(F)
@@ -59,6 +72,6 @@ def reasoner(F, rules, *args):
 if __name__=="__main__":
     # приклад:
     F={(1,2,3),(3,2,4),(5,2,6),(1,0,7),(8,0,9)} # факти-триплети (s,p,o)
-    A=reasoner(F, [rule1, rule2], (2,), (0,))
+    A=reasoner(F, [rule1, rule2, rule_specific], (2,), (0,),)
     print(A)
     print(A-F)
